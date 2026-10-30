@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vikan Informática | Peças e Componentes para Computadores</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for Sales Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#101B2D',       /* Azul-marinho tecnológico */
+                            blue: '#087CF0',       /* Azul elétrico */
+                            teal: '#18C8B0',       /* Verde turquesa */
+                            ice: '#F3F6FA',        /* Cinza gelo */
+                            white: '#FFFFFF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F3F6FA;
+            color: #101B2D;
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F3F6FA;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #087CF0;
+            border-radius: 4px;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px -10px rgba(8, 124, 240, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-brand-ice min-h-screen flex flex-col justify-between selection:bg-brand-teal selection:text-brand-navy">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-brand-navy text-white text-xs py-2 px-4 border-b border-gray-800">
+        <div class="max-w-7xl mx-mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
+            <div class="flex items-center gap-4">
+                <span><i class="fa-solid fa-truck-fast text-brand-teal mr-1"></i> Frete Grátis para todo o Brasil em compras acima de R$ 499</span>
+                <span class="hidden md:inline text-gray-500">|</span>
+                <span class="hidden md:inline"><i class="fa-solid fa-shield-halved text-brand-teal mr-1"></i> Garantia Direta Vikan</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="mailto:Vikaninformatica@gmail.com" class="hover:text-brand-teal transition"><i class="fa-regular fa-envelope text-brand-blue mr-1"></i> Vikaninformatica@gmail.com</a>
+                <button onclick="toggleDashboard()" class="bg-brand-blue hover:bg-blue-600 text-white px-2.5 py-0.5 rounded text-xs font-semibold transition flex items-center gap-1">
+                    <i class="fa-solid fa-user-gear"></i> Area do Vendedor
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVBAR -->
+    <header class="bg-brand-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 gap-4">
+                
+                <!-- LOGO (SVG Reconstruído idêntico à imagem enviada) -->
+                <a href="#" onclick="showStore()" class="flex items-center gap-3 group">
+                    <div class="w-12 h-12 relative flex items-center justify-center">
+                        <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-sm">
+                            <!-- Outer Dark Circle -->
+                            <circle cx="100" cy="100" r="92" fill="#101B2D" stroke="#087CF0" stroke-width="6"/>
+                            <!-- Ellipse Ring (Orbit) -->
+                            <ellipse cx="100" cy="95" rx="85" ry="28" fill="none" stroke="#087CF0" stroke-width="6" transform="rotate(-15 100 95)"/>
+                            <!-- V Logo Shape Left Light Shade -->
+                            <path d="M 58 60 L 85 150 L 105 150 L 80 60 Z" fill="#E2E8F0"/>
+                            <!-- V Logo Shape Right Vibrant Blue -->
+                            <path d="M 80 150 L 142 60 L 120 60 L 85 135 Z" fill="#087CF0"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-black tracking-wider text-brand-navy leading-none group-hover:text-brand-blue transition">VIKAN</span>
+                        <span class="text-[10px] font-bold tracking-widest text-brand-blue uppercase leading-tight">Informática</span>
+                    </div>
+                </a>
+
+                <!-- SEARCH BAR -->
+                <div class="flex-1 max-w-2xl mx-4 hidden md:block">
+                    <div class="relative">
+                        <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Busque por placa de vídeo, processador, cadeira, mousepad..." 
+                            class="w-full pl-11 pr-4 py-2.5 bg-brand-ice border border-gray-300 rounded-full text-sm text-brand-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- RIGHT ACTIONS -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleCart()" class="relative p-2.5 bg-brand-ice text-brand-navy hover:text-brand-blue rounded-full transition">
+                        <i class="fa-solid fa-cart-shopping text-xl"></i>
+                        <span id="cartBadge" class="absolute -top-1 -right-1 bg-brand-teal text-brand-navy font-bold text-xs w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MOBILE SEARCH -->
+            <div class="pb-3 md:hidden">
+                <div class="relative">
+                    <input type="text" id="searchInputMobile" oninput="filterProductsMobile()" placeholder="O que você procura hoje?" 
+                        class="w-full pl-10 pr-4 py-2 bg-brand-ice border border-gray-300 rounded-lg text-sm text-brand-navy focus:outline-none focus:border-brand-blue">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORIES BAR -->
+        <nav class="bg-brand-navy text-white text-sm border-t border-gray-800 overflow-x-auto custom-scrollbar">
+            <div class="max-w-7xl mx-auto px-4 flex items-center gap-8 py-3 whitespace-nowrap">
+                <button onclick="filterCategory('all')" class="category-btn active text-brand-teal font-semibold hover:text-brand-teal transition flex items-center gap-2">
+                    <i class="fa-solid fa-border-all"></i> Todos os Produtos
+                </button>
+                <button onclick="filterCategory('hardware')" class="category-btn text-gray-300 hover:text-brand-teal transition flex items-center gap-2">
+                    <i class="fa-solid fa-microchip"></i> Hardware & Peças
+                </button>
+                <button onclick="filterCategory('perifericos')" class="category-btn text-gray-300 hover:text-brand-teal transition flex items-center gap-2">
+                    <i class="fa-solid fa-keyboard"></i> Periféricos
+                </button>
+                <button onclick="filterCategory('cadeiras')" class="category-btn text-gray-300 hover:text-brand-teal transition flex items-center gap-2">
+                    <i class="fa-solid fa-chair"></i> Cadeiras Gamer
+                </button>
+                <button onclick="filterCategory('acessorios')" class="category-btn text-gray-300 hover:text-brand-teal transition flex items-center gap-2">
+                    <i class="fa-solid fa-rug"></i> Mousepads & Acessórios
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT VIEW (STORE) -->
+    <main id="storeView" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- BANNER PROMO -->
+        <div class="relative rounded-2xl bg-gradient-to-r from-brand-navy via-slate-900 to-brand-blue text-white p-6 sm:p-10 mb-8 overflow-hidden shadow-xl border border-brand-blue/30">
+            <div class="relative z-10 max-w-xl">
+                <span class="bg-brand-teal text-brand-navy font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block">Oferta Especial Vikan</span>
+                <h1 class="text-3xl sm:text-5xl font-black mb-3 leading-tight">Monte seu Setup de Alta Performance</h1>
+                <p class="text-gray-300 text-sm sm:text-base mb-6">Processadores de última geração, placas RTX, acessórios ergonômicos e entrega rápida com garantia nacional.</p>
+                <a href="#productsGrid" class="inline-flex items-center gap-2 bg-brand-teal text-brand-navy font-bold px-6 py-3 rounded-lg hover:bg-teal-300 transition shadow-lg">
+                    Ver Ofertas em Destaque <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="absolute right-[-20px] bottom-[-20px] opacity-20 lg:opacity-40 pointer-events-none">
+                <i class="fa-solid fa-computer text-[240px] text-brand-blue"></i>
+            </div>
+        </div>
+
+        <!-- FILTER & CONTROL TOOLBAR -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <div>
+                <h2 id="categoryTitle" class="text-xl font-bold text-brand-navy">Todos os Produtos</h2>
+                <p id="productCount" class="text-xs text-gray-500">Exibindo catálogo completo</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <label for="sortSelect" class="text-xs font-semibold text-gray-600">Ordenar por:</label>
+                <select id="sortSelect" onchange="sortProducts()" class="bg-brand-ice border border-gray-300 rounded-lg text-xs font-medium px-3 py-2 text-brand-navy focus:outline-none focus:border-brand-blue">
+                    <option value="featured">Destaques Vikan</option>
+                    <option value="price-asc">Menor Preço</option>
+                    <option value="price-desc">Maior Preço</option>
+                    <option value="name">Nome (A-Z)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- PRODUCTS GRID -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Rendered via JS -->
+        </div>
+
+    </main>
+
+    <!-- DASHBOARD VIEW (PAINEL DE VENDAS) -->
+    <main id="dashboardView" class="hidden flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- DASH HEADER -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-brand-navy text-white p-6 rounded-2xl shadow-lg">
+            <div>
+                <span class="text-brand-teal text-xs font-bold uppercase tracking-widest">Acesso Restrito</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-brand-blue"></i> Painel Comercial & Vendedores
+                </h1>
+                <p class="text-gray-400 text-xs mt-1">Acompanhe métricas, pedidos e gere links de cobrança instantâneos.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="openChargeModal()" class="bg-brand-teal hover:bg-teal-400 text-brand-navy font-bold px-4 py-2.5 rounded-lg text-sm transition flex items-center gap-2 shadow">
+                    <i class="fa-solid fa-plus-circle"></i> Gerar Cobrança Direta
+                </button>
+                <button onclick="showStore()" class="bg-brand-blue hover:bg-blue-600 text-white font-bold px-4 py-2.5 rounded-lg text-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-store"></i> Voltar à Loja
+                </button>
+            </div>
+        </div>
+
+        <!-- METRICS CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between text-gray-500 mb-2">
+                    <span class="text-xs font-semibold">Faturamento Total</span>
+                    <i class="fa-solid fa-sack-dollar text-brand-teal text-lg"></i>
+                </div>
+                <div class="text-2xl font-black text-brand-navy" id="dashTotalSales">R$ 148.920,00</div>
+                <span class="text-xs text-green-600 font-medium"><i class="fa-solid fa-arrow-trend-up"></i> +14.2% este mês</span>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between text-gray-500 mb-2">
+                    <span class="text-xs font-semibold">Pedidos Realizados</span>
+                    <i class="fa-solid fa-box-open text-brand-blue text-lg"></i>
+                </div>
+                <div class="text-2xl font-black text-brand-navy" id="dashOrderCount">84</div>
+                <span class="text-xs text-brand-blue font-medium"><i class="fa-solid fa-clock"></i> 12 aguardando envio</span>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between text-gray-500 mb-2">
+                    <span class="text-xs font-semibold">Ticket Médio</span>
+                    <i class="fa-solid fa-receipt text-purple-500 text-lg"></i>
+                </div>
+                <div class="text-2xl font-black text-brand-navy">R$ 1.772,85</div>
+                <span class="text-xs text-gray-500 font-medium">Baseado em 30 dias</span>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between text-gray-500 mb-2">
+                    <span class="text-xs font-semibold">Cobranças Geradas</span>
+                    <i class="fa-solid fa-qrcode text-amber-500 text-lg"></i>
+                </div>
+                <div class="text-2xl font-black text-brand-navy" id="dashChargesCount">29</div>
+                <span class="text-xs text-amber-600 font-medium"><i class="fa-solid fa-circle-notch fa-spin"></i> 5 pendentes</span>
+            </div>
+        </div>
+
+        <!-- SALES CHART & GENERATE CHARGE SECTION -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <h3 class="text-base font-bold text-brand-navy mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-column text-brand-blue"></i> Desempenho de Vendas Recentes
+                </h3>
+                <div class="h-64">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- GERADOR RÁPIDO DE COBRANÇAS -->
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-brand-navy mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-brand-teal"></i> Gerar Cobrança Pix/Boleto
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-4">Crie um link/QR Code personalizado para o cliente pagar diretamente.</p>
+                    
+                    <form id="quickChargeForm" onsubmit="handleGenerateCharge(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Nome do Cliente</label>
+                            <input type="text" id="chargeCustomer" required placeholder="Ex: Roberto Silva" class="w-full text-xs p-2.5 bg-brand-ice border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Descrição das Peças / Serviços</label>
+                            <input type="text" id="chargeDesc" required placeholder="Ex: Placa de Vídeo RTX 4060 + Montagem" class="w-full text-xs p-2.5 bg-brand-ice border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Valor Final (R$)</label>
+                            <input type="number" step="0.01" id="chargeValue" required placeholder="2500.00" class="w-full text-xs p-2.5 bg-brand-ice border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                        </div>
+                        <button type="submit" class="w-full bg-brand-navy hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-qrcode text-brand-teal"></i> Gerar Link & QR Code
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT ORDERS TABLE -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                    <h3 class="text-base font-bold text-brand-navy">Histórico de Vendas & Pedidos</h3>
+                    <p class="text-xs text-gray-500">Últimas transações efetuadas na plataforma Vikan</p>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-brand-ice text-brand-navy text-xs font-bold uppercase border-b border-gray-200">
+                            <th class="py-3 px-4">ID Pedido</th>
+                            <th class="py-3 px-4">Cliente</th>
+                            <th class="py-3 px-4">Itens</th>
+                            <th class="py-3 px-4">Valor Total</th>
+                            <th class="py-3 px-4">Método</th>
+                            <th class="py-3 px-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody" class="text-xs divide-y divide-gray-100 text-gray-700">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- CART SIDEBAR MODAL -->
+    <div id="cartModal" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm transition-opacity">
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col justify-between transform transition-transform">
+            
+            <!-- CART HEADER -->
+            <div class="p-4 bg-brand-navy text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-brand-teal"></i>
+                    <h3 class="font-bold text-lg">Seu Carrinho Vikan</h3>
+                </div>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- CART ITEMS -->
+            <div id="cartItemsContainer" class="flex-grow p-4 overflow-y-auto space-y-4 custom-scrollbar">
+                <!-- Rendered by JS -->
+            </div>
+
+            <!-- CART FOOTER -->
+            <div class="p-4 bg-brand-ice border-t border-gray-200 space-y-3">
+                <div class="flex justify-between text-sm font-semibold text-brand-navy">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">R$ 0,00</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>Frete:</span>
+                    <span class="text-brand-teal font-bold">Grátis</span>
+                </div>
+                <div class="flex justify-between text-base font-black text-brand-navy pt-2 border-t border-gray-300">
+                    <span>Total:</span>
+                    <span id="cartTotal" class="text-brand-blue">R$ 0,00</span>
+                </div>
+                <button onclick="openCheckoutModal()" class="w-full bg-brand-teal hover:bg-teal-400 text-brand-navy font-black py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Finalizar Compra
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div id="productModal" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col md:flex-row">
+            <button onclick="closeProductModal()" class="absolute top-3 right-3 bg-gray-100 hover:bg-gray-200 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="md:w-1/2 bg-brand-ice p-6 flex items-center justify-center">
+                <img id="modalImg" src="" alt="Produto" class="max-h-64 object-contain">
+            </div>
+            <div class="md:w-1/2 p-6 flex flex-col justify-between">
+                <div>
+                    <span id="modalCategory" class="text-[10px] font-bold text-brand-blue uppercase tracking-widest"></span>
+                    <h2 id="modalTitle" class="text-xl font-black text-brand-navy mt-1 mb-2"></h2>
+                    <p id="modalDesc" class="text-xs text-gray-600 mb-4 leading-relaxed"></p>
+                    <div class="text-2xl font-black text-brand-navy mb-4" id="modalPrice"></div>
+                </div>
+                <button id="modalAddBtn" class="w-full bg-brand-blue hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-cart-plus"></i> Adicionar ao Carrinho
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-md w-full rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-extrabold text-brand-navy mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-credit-card text-brand-blue"></i> Finalizar Pedido Vikan
+            </h3>
+            <p class="text-xs text-gray-500 mb-4">Insira seus dados para concluir a compra com total segurança.</p>
+
+            <form onsubmit="handleFinishOrder(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Nome Completo</label>
+                    <input type="text" required placeholder="João da Silva" class="w-full text-xs p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">E-mail para Recebimento</label>
+                    <input type="email" required placeholder="cliente@email.com" class="w-full text-xs p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Forma de Pagamento</label>
+                    <select id="paymentMethod" class="w-full text-xs p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                        <option value="pix">Pix (Aprovação Instantânea - 5% OFF)</option>
+                        <option value="card">Cartão de Crédito (até 12x)</option>
+                        <option value="boleto">Boleto Bancário</option>
+                    </select>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-brand-teal hover:bg-teal-400 text-brand-navy font-black py-3 rounded-xl transition shadow text-sm">
+                        Confirmar e Pagar Agora
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- COBRANÇA GERADA MODAL -->
+    <div id="chargeResultModal" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-2xl p-6 shadow-2xl text-center relative">
+            <button onclick="closeChargeResultModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="text-lg font-bold text-brand-navy mb-1">Cobrança Gerada!</h3>
+            <p class="text-xs text-gray-500 mb-4" id="chargeResultClient">Para: Roberto Silva</p>
+
+            <div class="bg-brand-ice p-4 rounded-xl border border-gray-200 mb-4 flex flex-col items-center">
+                <!-- Mock QR Code SVG -->
+                <div class="bg-white p-2 rounded border border-gray-300 mb-2">
+                    <svg viewBox="0 0 100 100" class="w-32 h-32">
+                        <path d="M 0 0 H 40 V 40 H 0 Z M 10 10 V 30 H 30 V 10 Z M 60 0 H 100 V 40 H 60 Z M 70 10 V 30 H 90 V 10 Z M 0 60 H 40 V 100 H 0 Z M 10 70 V 90 H 30 V 70 Z M 50 50 H 60 V 60 H 50 Z M 70 50 H 90 V 60 H 70 Z M 50 70 H 70 V 80 H 50 Z M 80 80 H 100 V 100 H 80 Z" fill="#101B2D"/>
+                    </svg>
+                </div>
+                <span class="text-xs text-gray-500 font-semibold mb-1">Valor a Cobrar:</span>
+                <span class="text-xl font-black text-brand-blue" id="chargeResultVal">R$ 0,00</span>
+            </div>
+
+            <button onclick="copyChargeLink()" class="w-full bg-brand-blue hover:bg-blue-600 text-white text-xs font-bold py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-copy"></i> Copiar Link de Cobrança
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER COM DADOS EXIGIDOS -->
+    <footer class="bg-brand-navy text-white text-xs border-t border-gray-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                
+                <!-- BRAND INFO -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8">
+                            <svg viewBox="0 0 200 200" class="w-full h-full">
+                                <circle cx="100" cy="100" r="92" fill="#101B2D" stroke="#087CF0" stroke-width="8"/>
+                                <ellipse cx="100" cy="95" rx="85" ry="28" fill="none" stroke="#087CF0" stroke-width="8" transform="rotate(-15 100 95)"/>
+                                <path d="M 58 60 L 85 150 L 105 150 L 80 60 Z" fill="#E2E8F0"/>
+                                <path d="M 80 150 L 142 60 L 120 60 L 85 135 Z" fill="#087CF0"/>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-black tracking-wider text-white">VIKAN</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">Sua loja especializada em peças, componentes de hardware de alta performance e acessórios para desktop.</p>
+                </div>
+
+                <!-- QUICK LINKS -->
+                <div>
+                    <h4 class="text-sm font-bold text-brand-teal uppercase tracking-wider mb-3">Navegação</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" onclick="filterCategory('hardware')" class="hover:text-brand-blue transition">Hardware & Placas</a></li>
+                        <li><a href="#" onclick="filterCategory('perifericos')" class="hover:text-brand-blue transition">Teclados & Mouses</a></li>
+                        <li><a href="#" onclick="filterCategory('cadeiras')" class="hover:text-brand-blue transition">Cadeiras Gamer</a></li>
+                        <li><a href="#" onclick="filterCategory('acessorios')" class="hover:text-brand-blue transition">Mousepads XL</a></li>
+                    </ul>
+                </div>
+
+                <!-- INSTITUTIONAL -->
+                <div>
+                    <h4 class="text-sm font-bold text-brand-teal uppercase tracking-wider mb-3">Institucional</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-brand-blue transition">Política de Garantia</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition">Envio & Rastreio</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition">Termos de Serviço</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition">Trabalhe Conosco</a></li>
+                    </ul>
+                </div>
+
+                <!-- CONTACT & LEGAL DATA -->
+                <div>
+                    <h4 class="text-sm font-bold text-brand-teal uppercase tracking-wider mb-3">Contato & Dados Legais</h4>
+                    <div class="space-y-2 text-gray-300">
+                        <p><i class="fa-solid fa-envelope text-brand-blue mr-1"></i> E-mail: <br><strong class="text-white">Vikaninformatica@gmail.com</strong></p>
+                        <p><i class="fa-solid fa-id-card text-brand-blue mr-1"></i> CNPJ: <br><strong class="text-white">57.317.760/0001-44</strong></p>
+                        <p><i class="fa-solid fa-location-dot text-brand-blue mr-1"></i> São Paulo, SP - Brasil</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-gray-500 gap-4">
+                <p>© 2026 Vikan Informática - Todos os direitos reservados.</p>
+                <div class="flex items-center gap-4 text-lg">
+                    <i class="fa-brands fa-cc-visa text-gray-400 hover:text-white transition"></i>
+                    <i class="fa-brands fa-cc-mastercard text-gray-400 hover:text-white transition"></i>
+                    <i class="fa-solid fa-pix text-gray-400 hover:text-white transition"></i>
+                    <i class="fa-solid fa-barcode text-gray-400 hover:text-white transition"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // CATÁLOGO COMPLETO DE PRODUTOS VIKAN
+        const products = [
+            {
+                id: 1,
+                name: "Placa de Vídeo RTX 4070 Super 12GB GDDR6X",
+                category: "hardware",
+                price: 4399.90,
+                oldPrice: 4899.90,
+                image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&q=80",
+                desc: "Placa de vídeo de alta performance com Ray Tracing e DLSS 3. Ideal para jogos em 4K e renderização 3D pesada."
+            },
+            {
+                id: 2,
+                name: "Processador Intel Core i7-14700K 20-Cores",
+                category: "hardware",
+                price: 2799.00,
+                oldPrice: 3100.00,
+                image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80",
+                desc: "Arquitetura híbrida de alto desempenho com até 5.6GHz Max Turbo. Socket LGA1700."
+            },
+            {
+                id: 3,
+                name: "Memória RAM DDR5 Corsair Vengeance 32GB (2x16GB) 6000MHz",
+                category: "hardware",
+                price: 899.90,
+                oldPrice: 1050.00,
+                image: "https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=600&q=80",
+                desc: "Desempenho ultra rápido para multitasking e jogos exigentes. Suporte a perfis Intel XMP 3.0."
+            },
+            {
+                id: 4,
+                name: "SSD NVMe M.2 2TB Kingston KC3000 PCIe 4.0 7000MB/s",
+                category: "hardware",
+                price: 949.00,
+                oldPrice: 1100.00,
+                image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=600&q=80",
+                desc: "Armazenamento em estado sólido de altíssima velocidade para carregamento instantâneo de jogos e sistemas."
+            },
+            {
+                id: 5,
+                name: "Cadeira Gamer Vikan Ergonomic Pro Ajustável Reclinável",
+                category: "cadeiras",
+                price: 1299.00,
+                oldPrice: 1599.00,
+                image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&w=600&q=80",
+                desc: "Espuma injetada de alta densidade, apoio de braço 4D e estrutura de aço reforçado para máximo conforto nas sessões longas."
+            },
+            {
+                id: 6,
+                name: "Cadeira de Escritório Vikan Mesh Executiva Respirável",
+                category: "cadeiras",
+                price: 849.90,
+                oldPrice: 999.00,
+                image: "https://images.unsplash.com/photo-1505797149-43b0069ec26b?auto=format&fit=crop&w=600&q=80",
+                desc: "Encosto em malha mesh respirável com suporte lombar dinâmico ajustável."
+            },
+            {
+                id: 7,
+                name: "Mousepad Gamer Extra Grande Speed Vikan (900x400mm)",
+                category: "acessorios",
+                price: 89.90,
+                oldPrice: 129.90,
+                image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80",
+                desc: "Superfície em tecido micro-texturizado à prova d'água com bordas costuradas em azul Vikan."
+            },
+            {
+                id: 8,
+                name: "Mousepad Gamer RGB Control Borda Iluminada (800x300mm)",
+                category: "acessorios",
+                price: 119.90,
+                oldPrice: 159.90,
+                image: "https://images.unsplash.com/photo-1629429408209-1f912961dbd8?auto=format&fit=crop&w=600&q=80",
+                desc: "14 modos de iluminação RGB customizáveis com base de borracha antiderrapante."
+            },
+            {
+                id: 9,
+                name: "Teclado Mecânico RGB Switch Blue Vikan Tactical",
+                category: "perifericos",
+                price: 289.90,
+                oldPrice: 349.90,
+                image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
+                desc: "Layout ABNT2, teclas Anti-Ghosting completas e construção em alumínio escovado."
+            },
+            {
+                id: 10,
+                name: "Mouse Gamer Sem Fio 26.000 DPI Vikan Ultralight",
+                category: "perifericos",
+                price: 329.90,
+                oldPrice: 399.90,
+                image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80",
+                desc: "Apenas 58 gramas, sensor óptico Pixart avançado e bateria com até 80 horas de autonomia."
+            },
+            {
+                id: 11,
+                name: "Gabinete Gamer Aquário ATX Vidro Temperado Vikan Prism",
+                category: "hardware",
+                price: 499.90,
+                oldPrice: 599.90,
+                image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&w=600&q=80",
+                desc: "Visão panorâmica dos componentes internos, acompanha 3 ventoinhas ARGB pré-instaladas."
+            },
+            {
+                id: 12,
+                name: "Headset Gamer 7.1 Surround Vikan Pulse Wireless",
+                category: "perifericos",
+                price: 379.90,
+                oldPrice: 450.00,
+                image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=600&q=80",
+                desc: "Drivers de 50mm de alta fidelidade sonora com microfone com cancelamento de ruído ativável."
+            }
+        ];
+
+        // MOCK DE PEDIDOS PARA O DASHBOARD
+        let orders = [
+            { id: "VKN-9021", client: "Carlos Eduardo", items: "1x RTX 4070 Super", total: 4399.90, method: "PIX", status: "Concluído" },
+            { id: "VKN-9022", client: "Fernanda Lima", items: "1x Cadeira Gamer Vikan, 1x Mousepad XL", total: 1388.90, method: "Cartão de Crédito", status: "Em Transporte" },
+            { id: "VKN-9023", client: "Gabriel Souza", items: "2x Memória RAM DDR5 32GB", total: 1799.80, method: "PIX", status: "Concluído" },
+            { id: "VKN-9024", client: "Mariana Costa", items: "1x SSD NVMe 2TB", total: 949.00, method: "Boleto", status: "Pendente" }
+        ];
+
+        let cart = [];
+        let currentCategory = 'all';
+
+        // INICIALIZAÇÃO
+        window.onload = function() {
+            renderProducts(products);
+            initChart();
+            renderOrdersTable();
+        };
+
+        // RENDERIZAR PRODUTOS
+        function renderProducts(items) {
+            const grid = document.getElementById('productsGrid');
+            const count = document.getElementById('productCount');
+            
+            grid.innerHTML = '';
+            count.innerText = `Exibindo ${items.length} produto(s)`;
+
+            if(items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-gray-500">
+                        <i class="fa-solid fa-box-open text-4xl mb-2 text-gray-300"></i>
+                        <p class="font-semibold">Nenhum produto encontrado para sua busca.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            items.forEach(prod => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm card-hover flex flex-col justify-between p-4 relative">
+                        ${prod.oldPrice ? `<span class="absolute top-3 left-3 bg-brand-teal text-brand-navy font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase">PROMO</span>` : ''}
+                        
+                        <div class="cursor-pointer" onclick="openProductModal(${prod.id})">
+                            <div class="h-44 w-full flex items-center justify-center p-2 mb-3 bg-brand-ice rounded-xl">
+                                <img src="${prod.image}" alt="${prod.name}" class="max-h-full max-w-full object-contain">
+                            </div>
+                            <span class="text-[10px] font-bold text-brand-blue uppercase tracking-wider">${getCategoryName(prod.category)}</span>
+                            <h3 class="text-xs font-bold text-brand-navy line-clamp-2 h-8 mt-1 mb-2 hover:text-brand-blue transition">${prod.name}</h3>
+                        </div>
+
+                        <div>
+                            <div class="mb-3">
+                                ${prod.oldPrice ? `<span class="text-xs text-gray-400 line-through">R$ ${prod.oldPrice.toFixed(2).replace('.', ',')}</span>` : ''}
+                                <div class="text-lg font-black text-brand-navy">R$ ${prod.price.toFixed(2).replace('.', ',')}</div>
+                                <span class="text-[10px] text-green-600 font-semibold">à vista no PIX com desconto</span>
+                            </div>
+
+                            <button onclick="addToCart(${prod.id})" class="w-full bg-brand-blue hover:bg-blue-600 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-cart-plus"></i> Comprar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function getCategoryName(cat) {
+            const map = {
+                'hardware': 'Hardware & Peças',
+                'cadeiras': 'Cadeiras Gamer',
+                'acessorios': 'Mousepads & Acessórios',
+                'perifericos': 'Periféricos'
+            };
+            return map[cat] || cat;
+        }
+
+        // FILTRAGEM
+        function filterCategory(cat) {
+            currentCategory = cat;
+            
+            // Atualizar botões de categoria
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('text-brand-teal', 'font-semibold');
+                btn.classList.add('text-gray-300');
+            });
+            event.currentTarget.classList.add('text-brand-teal', 'font-semibold');
+
+            const title = document.getElementById('categoryTitle');
+            if(cat === 'all') {
+                title.innerText = 'Todos os Produtos';
+                renderProducts(products);
+            } else {
+                title.innerText = getCategoryName(cat);
+                const filtered = products.filter(p => p.category === cat);
+                renderProducts(filtered);
+            }
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        function filterProductsMobile() {
+            const query = document.getElementById('searchInputMobile').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        function sortProducts() {
+            const sortType = document.getElementById('sortSelect').value;
+            let currentList = currentCategory === 'all' ? [...products] : products.filter(p => p.category === currentCategory);
+
+            if(sortType === 'price-asc') currentList.sort((a,b) => a.price - b.price);
+            if(sortType === 'price-desc') currentList.sort((a,b) => b.price - a.price);
+            if(sortType === 'name') currentList.sort((a,b) => a.name.localeCompare(b.name));
+
+            renderProducts(currentList);
+        }
+
+        // CARRINHO
+        function addToCart(productId) {
+            const prod = products.find(p => p.id === productId);
+            const item = cart.find(i => i.id === productId);
+
+            if(item) {
+                item.qty++;
+            } else {
+                cart.push({ ...prod, qty: 1 });
+            }
+
+            updateCartUI();
+            toggleCart(true); // Abre o carrinho
+        }
+
+        function updateCartQty(productId, change) {
+            const item = cart.find(i => i.id === productId);
+            if(item) {
+                item.qty += change;
+                if(item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== productId);
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const container = document.getElementById('cartItemsContainer');
+            const subtotalEl = document.getElementById('cartSubtotal');
+            const totalEl = document.getElementById('cartTotal');
+
+            const totalItems = cart.reduce((acc, i) => acc + i.qty, 0);
+            badge.innerText = totalItems;
+
+            container.innerHTML = '';
+
+            if(cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-2"></i>
+                        <p class="text-xs">Seu carrinho está vazio.</p>
+                    </div>
+                `;
+                subtotalEl.innerText = 'R$ 0,00';
+                totalEl.innerText = 'R$ 0,00';
+                return;
+            }
+
+            let grandTotal = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                grandTotal += itemTotal;
+
+                container.innerHTML += `
+                    <div class="flex items-center justify-between gap-3 bg-brand-ice p-3 rounded-xl border border-gray-200">
+                        <img src="${item.image}" class="w-12 h-12 object-contain bg-white rounded p-1">
+                        <div class="flex-1">
+                            <h4 class="text-xs font-bold text-brand-navy line-clamp-1">${item.name}</h4>
+                            <span class="text-xs text-brand-blue font-extrabold">R$ ${item.price.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-lg border border-gray-300">
+                            <button onclick="updateCartQty(${item.id}, -1)" class="text-xs font-bold text-gray-500 hover:text-brand-blue">-</button>
+                            <span class="text-xs font-bold text-brand-navy">${item.qty}</span>
+                            <button onclick="updateCartQty(${item.id}, 1)" class="text-xs font-bold text-gray-500 hover:text-brand-blue">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            subtotalEl.innerText = `R$ ${grandTotal.toFixed(2).replace('.', ',')}`;
+            totalEl.innerText = `R$ ${grandTotal.toFixed(2).replace('.', ',')}`;
+        }
+
+        function toggleCart(forceOpen = false) {
+            const modal = document.getElementById('cartModal');
+            if(forceOpen) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.toggle('hidden');
+            }
+        }
+
+        // MODAL DE PRODUTO
+        function openProductModal(id) {
+            const prod = products.find(p => p.id === id);
+            document.getElementById('modalImg').src = prod.image;
+            document.getElementById('modalCategory').innerText = getCategoryName(prod.category);
+            document.getElementById('modalTitle').innerText = prod.name;
+            document.getElementById('modalDesc').innerText = prod.desc;
+            document.getElementById('modalPrice').innerText = `R$ ${prod.price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('modalAddBtn').onclick = function() {
+                addToCart(prod.id);
+                closeProductModal();
+            };
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        // MODAL CHECKOUT
+        function openCheckoutModal() {
+            if(cart.length === 0) {
+                alert('Adicione produtos ao carrinho antes de finalizar!');
+                return;
+            }
+            toggleCart(false);
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function handleFinishOrder(e) {
+            e.preventDefault();
+            alert('Pedido efetuado com sucesso na Vikan Informática! Um e-mail de confirmação foi enviado.');
+            
+            // Adicionar ao mock do dashboard
+            const total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+            orders.unshift({
+                id: `VKN-${Math.floor(1000 + Math.random() * 9000)}`,
+                client: "Cliente Web",
+                items: cart.map(i => `${i.qty}x ${i.name}`).join(', '),
+                total: total,
+                method: document.getElementById('paymentMethod').value.toUpperCase(),
+                status: "Concluído"
+            });
+
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+            renderOrdersTable();
+        }
+
+        // NAVEGAÇÃO VIEWS (LOJA / DASHBOARD)
+        function toggleDashboard() {
+            document.getElementById('storeView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showStore() {
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('storeView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // DASHBOARD FUNCTIONS
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+
+            orders.forEach(ord => {
+                const statusColor = ord.status === 'Concluído' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 border-b border-gray-100">
+                        <td class="py-3 px-4 font-bold text-brand-blue">${ord.id}</td>
+                        <td class="py-3 px-4 font-medium">${ord.client}</td>
+                        <td class="py-3 px-4 text-gray-500 max-w-xs truncate">${ord.items}</td>
+                        <td class="py-3 px-4 font-extrabold text-brand-navy">R$ ${ord.total.toFixed(2).replace('.', ',')}</td>
+                        <td class="py-3 px-4">${ord.method}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusColor}">${ord.status}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('dashOrderCount').innerText = orders.length;
+        }
+
+        function handleGenerateCharge(e) {
+            e.preventDefault();
+            const client = document.getElementById('chargeCustomer').value;
+            const val = parseFloat(document.getElementById('chargeValue').value);
+
+            document.getElementById('chargeResultClient').innerText = `Para: ${client}`;
+            document.getElementById('chargeResultVal').innerText = `R$ ${val.toFixed(2).replace('.', ',')}`;
+
+            document.getElementById('chargeResultModal').classList.remove('hidden');
+            
+            // Incrementar contador mock
+            const chargesEl = document.getElementById('dashChargesCount');
+            chargesEl.innerText = parseInt(chargesEl.innerText) + 1;
+        }
+
+        function closeChargeResultModal() {
+            document.getElementById('chargeResultModal').classList.add('hidden');
+            document.getElementById('quickChargeForm').reset();
+        }
+
+        function copyChargeLink() {
+            navigator.clipboard.writeText('https://vikan.com.br/pay/charge_983120391823');
+            alert('Link de cobrança copiado com sucesso!');
+        }
+
+        // CHART.JS INICIALIZAÇÃO
+        function initChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Vendas (R$)',
+                        data: [12400, 18900, 15200, 24100, 29800, 31000, 17520],
+                        borderColor: '#087CF0',
+                        backgroundColor: 'rgba(8, 124, 240, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#18C8B0'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#F3F6FA' },
+                            ticks: { callback: value => 'R$ ' + value }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
